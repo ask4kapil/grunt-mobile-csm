@@ -237,6 +237,8 @@ module.exports = function (grunt) {
       grunt.verbose.writeln('------------------ Unused tablet files ------------------');
       grunt.verbose.writeln(diff.join("\n"));
     }
+
+    src ='';
     // Iterate over all specified file groups.
     required.forEach(function (file) {
       // Concat specified files.
