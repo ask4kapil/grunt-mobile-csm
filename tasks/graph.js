@@ -13,7 +13,8 @@ exports.init = function (grunt) {
         GLOB_RX = /\.\*$/,
         path = require('path'),
 
-        exports = {};
+        exports = {},
+        isTablet = false;
 
 
     function addNode(node) {
@@ -82,11 +83,13 @@ exports.init = function (grunt) {
         }
     }
 
-    function getDependencies(fromName) {
+    function getDependencies(fromName, tablet) {
         var from = Array.isArray(fromName) ? fromName : [fromName],
             resolvedNodes = [],
             nodes = [];
-
+        if(tablet) {
+          isTablet = true;
+        }
         grunt.verbose.writeln('Resolve from ' + from.join(', '));
 
         from.forEach(function (name) {
@@ -95,7 +98,9 @@ exports.init = function (grunt) {
 
         resolveDependencies(nodes, resolvedNodes);
 
-        grunt.verbose.ok('Resolved ' + resolvedNodes.length + ' nodes from ' + from.join(', '));
+        grunt.log.ok('Resolved ' + resolvedNodes.length + ' nodes from ' + from.join(', '));
+
+        isTablet = false;
 
         return resolvedNodes;
     }
@@ -138,6 +143,9 @@ exports.init = function (grunt) {
             }
             else {
               grunt.verbose.ok('Found class ' + name);
+            }
+            if(!isTablet && allNodesByName[name].isTablet) {
+              return resolvePath(allNodesByName[name].path.replace(/Tablet\\/g,""));
             }
             return [allNodesByName[name]];
         } else {

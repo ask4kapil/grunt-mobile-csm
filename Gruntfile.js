@@ -41,10 +41,9 @@ module.exports = function (grunt) {
           tempDir: 'tmp',
           uglify: true,
           output: 'tmp/dist',
-          outputFilename: 'capabilities.js',
+          outputFilename: 'capabilities',
           loadLocaleFiles: true,
-          resolveFromJson: ["webapp/Capabilities/capabilities.json","webapp/Capabilities/workspaces.json"],
-          resolveFrom: ["Capabilities.Utilities.controller.ctrSSU","Capabilities.SSU.Profile.view.vwProfile"]
+          resolveFromJson: ["webapp/Capabilities/capabilities.json","webapp/Capabilities/workspaces.json"]
         }
       }
     },

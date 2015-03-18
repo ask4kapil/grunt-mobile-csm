@@ -131,6 +131,9 @@ module.exports = function (grunt) {
       var outputPath = getOutputPath(filePath),
         data, node,result;
       grunt.verbose.writeln('Output file dir ' + outputPath);
+      if((outputPath.indexOf("locale_") > -1 && outputPath.indexOf("locale_en_US") === -1) || (outputPath.indexOf("settings.js") > -1)) {
+        return;
+      }
       if (parse) {
         data = grunt.file.read(filePath, { encoding: 'utf-8' });
         if (data && (node = parser.parse(data, outputPath))) {
@@ -155,7 +158,7 @@ module.exports = function (grunt) {
     }
 
     addDir(opts.src);
-    function resolveDependencies (from) {
+    function resolveDependencies (from, isTablet) {
       var resolveFrom = (Array.isArray(from) ? from : [from]).map(function (name) {
           if (~(name || '').indexOf(path.sep) || DOT_JS_RX.test(name)) {
             return name;
@@ -163,7 +166,7 @@ module.exports = function (grunt) {
             return name;
           }
         }),
-        required = graph.getDependencies(from);
+        required = graph.getDependencies(from, isTablet);
 
       return {
         required: required,
@@ -171,7 +174,7 @@ module.exports = function (grunt) {
       };
     }
     grunt.log.writeln('Now start resolve files');
-    if(opts.resolveFrom) {
+    if(!opts.resolveFrom) {
       opts.resolveFrom = [];
     }
 
@@ -209,8 +212,8 @@ module.exports = function (grunt) {
     grunt.log.writeln(required.join("\n"));
 
     if (diff && diff.length) {
-      grunt.log.writeln('------------------ Unused files ------------------');
-      grunt.log.writeln(diff.join("\n"));
+      grunt.verbose.writeln('------------------ Unused files ------------------');
+      grunt.verbose.writeln(diff.join("\n"));
     }
     var src ='';
     // Iterate over all specified file groups.
@@ -219,7 +222,29 @@ module.exports = function (grunt) {
       src += grunt.file.read(file);
     });
     if(opts.output && opts.outputFilename) {
-      grunt.file.write(opts.output + '/' + opts.outputFilename, src);
+      grunt.file.write(opts.output + '/' + opts.outputFilename + ".js", src);
     }
+
+    deps = resolveDependencies(opts.resolveFrom, true);
+    required = deps.required;
+    diff = deps.diff;
+    grunt.log.ok('Done, dependency graph for tablet has ' + required.length + ' files.');
+
+    grunt.log.writeln('----------------- Required tablet files -----------------');
+    grunt.log.writeln(required.join("\n"));
+
+    if (diff && diff.length) {
+      grunt.verbose.writeln('------------------ Unused tablet files ------------------');
+      grunt.verbose.writeln(diff.join("\n"));
+    }
+    // Iterate over all specified file groups.
+    required.forEach(function (file) {
+      // Concat specified files.
+      src += grunt.file.read(file);
+    });
+    if(opts.output && opts.outputFilename) {
+      grunt.file.write(opts.output + '/' + opts.outputFilename + '-tablet.js', src);
+    }
+
   });
 };

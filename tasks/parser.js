@@ -3,6 +3,7 @@
 
 function ExtClass(params) {
     this.names = params.names;
+    this.isTablet = params.isTablet;
     this.parentName = params.parentName;
     this.dependencies = params.dependencies || [];
     this.src = params.src;
@@ -41,7 +42,7 @@ exports.init = function (grunt, opts) {
 
     function parse(src, filePath) {
         var baseName = path.basename(filePath),
-            classData, cls;
+            classData, cls, isTablet = filePath? (filePath.indexOf('\\Tablet\\') > -1? true: false): false;
 
 
         _currentFilePath = filePath;
@@ -59,6 +60,7 @@ exports.init = function (grunt, opts) {
                     parentName: classData.parentName,
                     dependencies: classData.dependencies,
                     src: classData.src,
+                    isTablet: isTablet,
                     path: filePath
                 });
             } else if (classData.dependencies && classData.dependencies.length) {
@@ -67,6 +69,7 @@ exports.init = function (grunt, opts) {
                     names: [baseName],
                     parentName: classData.parentName,
                     dependencies: classData.dependencies,
+                    isTablet: isTablet,
                     src: classData.src,
                     path: filePath
                 });
@@ -76,6 +79,7 @@ exports.init = function (grunt, opts) {
             cls = new ExtClass({
                 names: [baseName],
                 dependencies: [],
+                isTablet: isTablet,
                 src: src, // classData is always undefined
                 path: filePath
             });
