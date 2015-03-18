@@ -114,8 +114,10 @@ exports.init = function (grunt) {
             if (node && node.path && resolvedNodes.indexOf(node.path) === -1) {
                 if (node.dependencies && node.dependencies.length) {
                     node.dependencies.forEach(function (dep) {
+                      if(node.names && node.names.length > 0 && node.names[0] !== dep) {
                         grunt.verbose.writeln('Resolve dependency ' + dep);
                         resolveDependencies(resolveName(dep), resolvedNodes);
+                      }
                     });
                 }
                 if (!node.path) {

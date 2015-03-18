@@ -131,7 +131,7 @@ module.exports = function (grunt) {
       var outputPath = getOutputPath(filePath),
         data, node,result;
       grunt.verbose.writeln('Output file dir ' + outputPath);
-      if((outputPath.indexOf("locale_") > -1 && outputPath.indexOf("locale_en_US") === -1) || (outputPath.indexOf("settings.js") > -1)) {
+      if((outputPath.indexOf("locale_") > -1 && outputPath.indexOf("locale_en_US") === -1) || (outputPath.indexOf("settings.js") > -1) || (outputPath.indexOf("app_languages.js") > -1) || (outputPath.indexOf(opts.outputFilename + ".js") > -1) || (outputPath.indexOf(opts.outputFilename + "-tablet.js") > -1)) {
         return;
       }
       if (parse) {
