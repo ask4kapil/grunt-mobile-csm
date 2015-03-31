@@ -149,6 +149,13 @@ exports.init = function (grunt) {
             if(!isTablet && allNodesByName[name].isTablet) {
               return resolvePath(allNodesByName[name].path.replace(/Tablet\\/g,""));
             }
+            if(isTablet && !allNodesByName[name].isTablet) {
+              var path = allNodesByName[name].path,
+                node = resolvePath(path.substr(0,path.lastIndexOf("\\")) + "\\Tablet\\" + path.substr(path.lastIndexOf("\\")+1, path.length), true);
+                if(node !== null) {
+                  return node;
+                }
+            }
             return [allNodesByName[name]];
         } else {
             grunt.verbose.writeln('Looking up package ' + name);
@@ -181,11 +188,14 @@ exports.init = function (grunt) {
         return nodes;
     }
 
-    function resolvePath(path) {
+    function resolvePath(path, noWarn) {
         var node = allNodesByPath[path];
         grunt.verbose.writeln('Looking up path ' + path + '...');
         if (!node) {
-            grunt.fail.warn('Missing file "' + path + '".');
+          if(noWarn) {
+            return null;
+          }
+          grunt.fail.warn('Missing file "' + path + '".');
         }
         grunt.verbose.ok('Found file ' + path);
         return [node];
